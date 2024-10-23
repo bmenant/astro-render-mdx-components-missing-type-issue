@@ -13,9 +13,22 @@ export async function getStaticPaths() {
 type Props = CollectionEntry<'blog'>;
 
 const post = Astro.props;
-const { Content, components } = await post.render();
+const {
+	Content,
+	components, // TS Error: Property `components` does not exist on type `Awaited<Render['*.mdx']>`
+} = await post.render();
+
+console.log(`${post.slug}:`, components); // undefined; always, even when the MDX exports custom components
+
 ---
 
 <BlogPost {...post.data}>
-	<Content components={{ ...components, h2: CustomH2 }} />
+	<Content components={{
+		h2: CustomH2
+		// This custom component is exported in one MDX:
+	    //h3: CustomH3,
+	    // The documentation says those must be passed back <Content components={{...components, h2: CustomH2 }} />
+	    // However, it seems those can be omitted without error nor difference. As a matter of fact,
+	    // the rendered mdx shows h2 as CustomH2 (defined here) and h3 as CustomH3 (when defined in the MDX).
+	}} />
 </BlogPost>

@@ -1,8 +1,16 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import CustomH2 from '../components/CustomH2.astro';
 import BlogPost from '../layouts/BlogPost.astro';
-import { Content, frontmatter, components } from '../content/blog/using-mdx.mdx';
+import * as Mdx from '../content/blog/using-mdx.mdx';
+import CustomH2 from '../components/CustomH2.astro';
+
+const {
+    Content,
+    frontmatter,
+    components, // TS Error: Property `components` does not exist on type `typeof import("*.mdx")`
+} = Mdx;
+
+console.log('import-mdx-1:', components); // undefined; this MDX does not export any custom component
 
 const data: CollectionEntry<'blog'>['data'] = {
     description: frontmatter.description,
@@ -13,5 +21,5 @@ const data: CollectionEntry<'blog'>['data'] = {
 };
 ---
 <BlogPost {...data}>
-    <Content components={{ ...components, h2: CustomH2 }} />
+    <Content components={{ h2: CustomH2 }} />
 </BlogPost>

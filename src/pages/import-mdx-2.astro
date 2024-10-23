@@ -1,0 +1,34 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import BlogPost from '../layouts/BlogPost.astro';
+import * as Mdx from '../content/blog/using-mdx-with-components.mdx';
+import CustomH2 from '../components/CustomH2.astro';
+
+const {
+    Content,
+    frontmatter,
+    components, // TS Error: Property `components` does not exist on type `typeof import("*.mdx")`
+} = Mdx;
+
+console.log('import-mdx-2:', components); // { h3: [Function: CustomH3] }
+
+const data: CollectionEntry<'blog'>['data'] = {
+    description: frontmatter.description,
+    heroImage: frontmatter.heroImage,
+    pubDate: new Date(frontmatter.pubDate),
+    title: `Imported - ${frontmatter.title}`,
+    updatedDate: frontmatter.updatedDate && new Date(frontmatter.updatedDate),
+};
+---
+<BlogPost {...data}>
+    <Content
+       components={{
+           h2: CustomH2,
+           // This custom component is exported in the MDX:
+           //h3: CustomH3,
+           // The documentation says those must be passed back <Content components={{...components, h2: CustomH2 }} />
+           // However, it seems those can be omitted without error nor difference. As a matter of fact,
+           // the rendered mdx shows h2 as CustomH2 (defined here) and h3 as CustomH3 (defined in the MDX).
+       }}
+    />
+</BlogPost>
