@@ -1,0 +1,17 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import CustomH2 from '../components/CustomH2.astro';
+import BlogPost from '../layouts/BlogPost.astro';
+import { Content, frontmatter, components } from '../content/blog/using-mdx.mdx';
+
+const data: CollectionEntry<'blog'>['data'] = {
+    description: frontmatter.description,
+    heroImage: frontmatter.heroImage,
+    pubDate: new Date(frontmatter.pubDate),
+    title: `Imported - ${frontmatter.title}`,
+    updatedDate: frontmatter.updatedDate && new Date(frontmatter.updatedDate),
+};
+---
+<BlogPost {...data}>
+    <Content components={{ ...components, h2: CustomH2 }} />
+</BlogPost>
